@@ -1,6 +1,7 @@
 """Entry point for running the dashboard via CLI."""
 
 import sys
+
 from streamlit.web import cli as stcli
 
 

@@ -14,7 +14,7 @@ All code has been linted and formatted using Ruff:
 
 ### Enabled Rules:
 - **E**: pycodestyle errors
-- **W**: pycodestyle warnings  
+- **W**: pycodestyle warnings
 - **F**: pyflakes (logical errors)
 - **I**: isort (import sorting)
 - **N**: pep8-naming (naming conventions)

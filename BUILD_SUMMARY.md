@@ -3,7 +3,7 @@
 ## ✅ Completed Successfully
 
 ### Project: European Banking Transparency Dashboard
-**Version:** 1.0.0  
+**Version:** 1.0.0
 **Date:** January 17, 2026
 
 ---
@@ -64,7 +64,7 @@ P3DH/
     └── __init__.py
 ```
 
-**Total Files:** 20+ Python modules  
+**Total Files:** 20+ Python modules
 **Total Lines:** 5,000+ lines of clean code
 
 ---

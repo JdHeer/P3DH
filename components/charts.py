@@ -62,18 +62,38 @@ def render_bar_chart(df, title, x_col, y_col, orientation='v', height=None):
 
     height = height or config.DEFAULT_CHART_HEIGHT
 
+    # Generate distinct colors for each bar
+    import plotly.colors as pc
+    n_bars = len(df)
+    colors = pc.sample_colorscale("Viridis", [i/(n_bars-1) if n_bars > 1 else 0.5 for i in range(n_bars)])
+
     fig = px.bar(
         df,
         x=x_col if orientation == 'v' else y_col,
         y=y_col if orientation == 'v' else x_col,
         orientation=orientation,
         title=title,
-        color=y_col if orientation == 'v' else x_col,
-        color_discrete_sequence=config.CHART_COLORS,
+        color=df.index,
+        color_discrete_sequence=colors,
         text=y_col if orientation == 'v' else x_col
     )
 
-    fig.update_traces(texttemplate='%{text:,.0f}', textposition='outside')
+    # Format numbers: show in thousands for large values
+    def format_number(val):
+        if val >= 1000:
+            return f'{val/1000:.0f}k'
+        return f'{val:.0f}'
+
+    fig.update_traces(
+        texttemplate='%{text}',
+        textposition='outside',
+        customdata=df[y_col if orientation == 'v' else x_col].apply(format_number)
+    )
+
+    # Update text to show formatted values
+    for trace in fig.data:
+        values = trace.y if orientation == 'v' else trace.x
+        trace.text = [format_number(v) for v in values]
 
     fig.update_layout(
         height=height,
@@ -85,6 +105,12 @@ def render_bar_chart(df, title, x_col, y_col, orientation='v', height=None):
         xaxis={'rangemode': 'tozero'} if orientation == 'h' else {},
         font={'size': 14}
     )
+
+    # Format axis labels to show thousands
+    if orientation == 'v':
+        fig.update_yaxes(tickformat='.0f')
+    else:
+        fig.update_xaxes(tickformat='.0f')
 
     st.plotly_chart(fig, use_container_width=True)
 
@@ -144,7 +170,14 @@ def render_heatmap(df, title, height=None):
                 f"Metric: {metric_catalog.get_metric_short_name(row_label)}<br>"
                 f"Bank: {col_label}<br>"
                 f"Amount: {value:,.0f}"
-            )Viridis',
+            )
+        hover_text.append(hover_row)
+
+    fig = go.Figure(data=go.Heatmap(
+        z=df.values,
+        x=df.columns,
+        y=[metric_catalog.get_metric_short_name(m) for m in df.index],
+        colorscale='Viridis',
         hovertemplate='%{text}<extra></extra>',
         text=hover_text,
         colorbar={'title': "Amount"}
@@ -155,14 +188,7 @@ def render_heatmap(df, title, height=None):
         height=height,
         xaxis_title="Banks",
         yaxis_title="Metrics",
-        font={'size': 14}mount"}
-    ))
-
-    fig.update_layout(
-        title=title,
-        height=height,
-        xaxis_title="Banks",
-        yaxis_title="Metrics"
+        font={'size': 14}
     )
 
     st.plotly_chart(fig, use_container_width=True)

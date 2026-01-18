@@ -7,7 +7,7 @@ from streamlit.web import cli as stcli
 
 def main():
     """Run the Streamlit dashboard."""
-    sys.argv = ["streamlit", "run", "app.py"]
+    sys.argv = ["streamlit", "run", "Compare.py"]
     sys.exit(stcli.main())
 
 

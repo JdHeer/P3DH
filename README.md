@@ -1,53 +1,94 @@
 # European Banking Transparency Dashboard
 
-An interactive Streamlit dashboard for analyzing European banking transparency data with comprehensive comparison and analysis tools.
+Interactive Streamlit dashboard for analyzing European banking transparency data.
 
 ## Features
 
-- 📊 **Overview Dashboard**: Quick insights and key statistics
-- 🔍 **Comparison Tools**: Compare banks and metrics with interactive visualizations
-- 📈 **Advanced Analytics**: Regional comparisons, trend analysis, and correlation studies
-- 💾 **Data Export**: Download filtered data in Excel or CSV format
-- 💡 **Automated Insights**: AI-generated insights and suggestions
-- 🎯 **Smart Selectors**: Regional grouping and category-based metric selection
+- 📊 **Overview**: Regional analysis and top banks at a glance
+- 🔍 **Compare**: Multi-bank/metric comparison with advanced filtering
+- 💾 **Export**: Download data in Excel/CSV
+- 📈 **Analytics**: Consistent colors, period-over-period changes, outlier detection
+- ⚡ **Performance**: Parquet support for 3-5x faster loading
 
-## Installation
-
-### Using uv (Recommended)
+## Quick Start
 
 ```bash
-# Install uv if you haven't already
-pip install uv
-
 # Install dependencies
-uv pip install -e .
-```
+uv sync
 
-### Using pip
+# Convert data to Parquet (optional, recommended for speed)
+uv run python utils/data_converter.py
 
-```bash
-pip install -e .
-```
-
-## Usage
-
-Run the dashboard:
-
-```bash
-# Recommended: Using uv
+# Run dashboard
 uv run dashboard
-
-# Alternative: Direct streamlit command
-streamlit run app.py
 ```
 
-The dashboard will open in your default web browser at `http://localhost:8501`
+Dashboard opens at http://localhost:8501
 
 ## Project Structure
 
 ```
 P3DH/
-├── app.py                      # Main Streamlit application
+├── app.py                  # Home page with regional analytics
+├── dashboard.py            # CLI entry point
+├── config.py               # Configuration
+├── pages/
+│   └── Compare.py          # Main comparison page
+├── components/             # Reusable UI components
+│   ├── charts.py           # Chart rendering
+│   ├── downloads.py        # Data export
+│   └── insights.py         # Automated insights
+├── src/                    # Core logic
+│   ├── data_loader.py      # Data loading (CSV/Parquet)
+│   ├── data_processor.py   # Data transformations
+│   ├── bank_catalog.py     # Bank information
+│   └── metric_catalog.py   # Metric categorization
+├── utils/
+│   └── data_converter.py   # CSV to Parquet converter
+└── data/                   # Data files
+```
+
+## Key Features
+
+### Selection
+- Region-based bank filtering (Nordic, Western Europe, etc.)
+- Metric search and categorization
+- Quick presets (Top 5, Nordic Banks, etc.)
+- Select All / Clear / Reset buttons
+- Collapsible selectors
+
+### Visualization
+- All metrics displayed simultaneously
+- Consistent bank colors across charts
+- Dynamic chart sizing
+- Period-over-period % change
+- Outlier detection (>2x average)
+- Sortable by value or alphabetically
+
+### Performance
+- Parquet format: 3-5x faster loading
+- 50-70% smaller file size
+- Cached data loading
+- Optimized data types
+
+## Requirements
+
+- Python 3.11+
+- Streamlit 1.30+
+- Pandas 2.0+
+- Plotly 5.18+
+- PyArrow 14.0+ (for Parquet)
+
+## Data Format
+
+Place your data file in `data/tr_cre.csv`. Required columns:
+- LEI_Code, NSA, Period, Item, Label
+- Portfolio, Country, Amount, Sheet
+
+Convert to Parquet for better performance:
+```bash
+uv run python utils/data_converter.py
+```
 ├── config.py                   # Configuration settings
 ├── pyproject.toml             # Project dependencies
 ├── data/                       # Data files

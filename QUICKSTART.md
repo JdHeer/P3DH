@@ -2,52 +2,56 @@
 
 ## Running the Dashboard
 
-### Option 1: Using uv (Recommended)
-
 ```powershell
 uv run dashboard
 ```
 
-### Option 2: Using the run scripts
-
-**Windows PowerShell:**
-```powershell
-.\run.ps1
-```
-
-**Windows Command Prompt:**
-```cmd
-run.bat
-```
-
-### Option 3: Manual activation
-
-```powershell
-# Activate virtual environment
-.\.venv\Scripts\Activate.ps1
-
-# Run the dashboard
-streamlit run app.py
-```
-
-## Accessing the Dashboard
-
-Once started, the dashboard will be available at:
-- **Local URL:** http://localhost:8501
-- **Network URL:** http://192.168.x.x:8501 (for access from other devices)
-
-Your default web browser should open automatically. If not, manually navigate to http://localhost:8501
-
-## Stopping the Dashboard
-
-Press `Ctrl+C` in the terminal to stop the server.
+Dashboard opens at: **http://localhost:8501**
 
 ## First Time Setup
 
-If you haven't installed dependencies yet:
-
 ```powershell
-# Create virtual environment
+# Install dependencies
+uv sync
+
+# Convert data to Parquet (recommended for speed)
+uv run python utils/data_converter.py
+```
+
+## Using the Dashboard
+
+### Home Page
+- View regional analysis
+- See top banks
+- Check data summary
+
+### Compare Page
+1. **Select Period** - Choose time period from dropdown
+2. **Choose Banks** - Use region filters or search
+3. **Pick Metrics** - Search or browse categories
+4. **View Charts** - All metrics shown at once
+
+### Quick Actions
+- **🎯 Presets** - Pre-configured selections
+- **⚙️ Settings** - Toggle features (stats, sorting, period change)
+- **▲ Hide** - Collapse selectors for more space
+
+### Tips
+- Use **Select All** / **Clear** for quick selection
+- Click **ℹ️** on charts for metric details
+- Enable **Show period change** to see trends
+- Sort by value to find top/bottom banks
+
+## Performance
+
+Convert CSV to Parquet for 3-5x faster loading:
+```powershell
+uv run python utils/data_converter.py
+```
+
+## Stopping
+
+Press `Ctrl+C` in the terminal to stop the server.
 uv venv
 
 # Activate it

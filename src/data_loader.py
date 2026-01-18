@@ -1,16 +1,26 @@
 """Data loading and caching module."""
 
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
 
 import config
 
 
-@st.cache_data(ttl=config.CACHE_TTL)
+@st.cache_data(ttl=config.CACHE_TTL, show_spinner=False)
 def load_data():
-    """Load the main transparency data with caching."""
+    """Load the main transparency data with caching. Prefers Parquet over CSV."""
     try:
-        df = pd.read_csv(config.DATA_PATH)
+        data_path = Path(config.DATA_PATH)
+        parquet_path = data_path.with_suffix('.parquet')
+
+        # Try loading Parquet first (faster)
+        if parquet_path.exists():
+            df = pd.read_parquet(parquet_path)
+        else:
+            # Fall back to CSV
+            df = pd.read_csv(config.DATA_PATH)
 
         # Basic data validation
         required_columns = ['LEI_Code', 'NSA', 'Period', 'Item', 'Label',
@@ -20,8 +30,10 @@ def load_data():
             st.error(f"Missing required columns: {missing_cols}")
             return None
 
-        # Convert Period to proper format
-        df['Period'] = pd.to_datetime(df['Period'].astype(str), format='%Y%m')
+        # Convert Period to datetime if needed (handles both integer and string formats)
+        if 'Period' in df.columns and df['Period'].dtype != 'datetime64[ns]':
+            df['Period'] = pd.to_datetime(df['Period'].astype(str), format='%Y%m')
+
         df['Period_Label'] = df['Period'].dt.strftime('%b %Y')
 
         return df
@@ -33,7 +45,7 @@ def load_data():
         return None
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def get_unique_values(df, column):
     """Get unique values from a column with caching."""
     if df is None or column not in df.columns:
@@ -41,16 +53,17 @@ def get_unique_values(df, column):
     return sorted(df[column].unique().tolist())
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def get_banks():
     """Get list of all banks."""
     df = load_data()
     if df is None:
         return []
-    return sorted(df['NSA'].unique().tolist())
+    # Use set for faster unique operation, then sort
+    return sorted(set(df['NSA'].tolist()))
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def get_periods():
     """Get list of all time periods."""
     df = load_data()
@@ -59,16 +72,17 @@ def get_periods():
     return sorted(df['Period'].unique())
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def get_metrics():
     """Get list of all metrics."""
     df = load_data()
     if df is None:
         return []
-    return sorted(df['Label'].unique().tolist())
+    # Use set for faster unique operation, then sort
+    return sorted(set(df['Label'].tolist()))
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def get_sheets():
     """Get list of all sheet categories."""
     df = load_data()

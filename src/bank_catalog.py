@@ -1,5 +1,5 @@
 """Bank information and grouping utilities."""
-import config
+from . import config
 
 # Full country names for NSA codes
 BANK_NAMES = {

@@ -1,9 +1,9 @@
 """Bank Comparison Dashboard - Landing Page"""
-import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from src import data_loader, metric_catalog
-import config
+import streamlit as st
+
+from src import config, data_loader, metric_catalog
 
 st.set_page_config(
     page_title=config.APP_TITLE,
@@ -39,7 +39,7 @@ if 'selected_period' not in st.session_state:
     st.session_state.selected_period = all_periods[-1]
 if 'bank_colors' not in st.session_state:
     # Custom color palette
-    colors = ['#002E2E', '#87E0B0', '#C3A8BA', '#295757', '#B0FFD9', '#DBCC9A', 
+    colors = ['#002E2E', '#87E0B0', '#C3A8BA', '#295757', '#B0FFD9', '#DBCC9A',
               '#001414', '#5EB887', '#A2874C', '#485154', '#1C0D0F', '#000000']
     st.session_state.bank_colors = {
         bank: colors[i % len(colors)]
@@ -176,7 +176,7 @@ total_metrics = len(selected_metrics)
 
 for metric_idx, metric in enumerate(selected_metrics):
     metric_data = filtered_df[filtered_df['Label'] == metric]
-    
+
     if metric_data.empty:
         continue
 
@@ -212,7 +212,7 @@ for metric_idx, metric in enumerate(selected_metrics):
 
             # Chart with average line
             fig = go.Figure()
-            
+
             # Add bars with improved styling
             fig.add_trace(go.Bar(
                 x=bank_values['Bank'],
@@ -225,7 +225,7 @@ for metric_idx, metric in enumerate(selected_metrics):
                 hovertemplate='<b>%{x}</b><br>%{y:,.0f}<extra></extra>',
                 showlegend=False
             ))
-            
+
             # Add average line - more subtle
             fig.add_trace(go.Scatter(
                 x=bank_values['Bank'],
@@ -257,7 +257,7 @@ for metric_idx, metric in enumerate(selected_metrics):
                 st.dataframe(table_df, hide_index=True, width="stretch", height=200)
 
         chart_idx += 1
-        
+
         # Update progress
         progress_bar.progress((metric_idx + 1) / total_metrics)
 

@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-import config
+from . import config
 
 
 @st.cache_data(ttl=config.CACHE_TTL, show_spinner=False)

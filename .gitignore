@@ -7,5 +7,22 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
-.ruff_cache
+.venv/
+.ruff_cache/
+
+# Backup files
+*_backup.py
+*.bak
+
+# IDE
+.vscode/
+.idea/
+
+# Data files (large)
+*.parquet
+data/*.csv
+!data/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -2,7 +2,7 @@
 name = "p3dh"
 version = "1.0.0"
 description = "European Banking Transparency Dashboard - Interactive Streamlit application for analyzing banking transparency data"
-readme = "README.md"
+readme = "docs/README.md"
 requires-python = ">=3.11"
 dependencies = [
     "streamlit>=1.30.0",
@@ -20,7 +20,7 @@ dev = [
 ]
 
 [project.scripts]
-dashboard = "dashboard:main"
+dashboard = "scripts.dashboard:main"
 
 [tool.uv]
 dev-dependencies = []

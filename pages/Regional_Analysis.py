@@ -1,11 +1,9 @@
 """Data & Information Page"""
-from datetime import datetime
-from io import BytesIO
-
-import pandas as pd
 import streamlit as st
 
-from src import config, data_loader
+import config
+from components import downloads
+from src import data_loader
 
 st.set_page_config(
     page_title=config.APP_TITLE,
@@ -65,44 +63,22 @@ with download_cols[0]:
         label_visibility="collapsed"
     )
 
-# Filter data
-download_df = df.copy()
-if selected_banks:
-    download_df = download_df[download_df['NSA'].isin(selected_banks)]
-
 with download_cols[1]:
     format_option = st.selectbox("Format", ["Excel", "CSV"], label_visibility="collapsed")
 
 with download_cols[2]:
+    st.write("")  # Spacing
+    st.write("")  # Spacing
+
+    # Filter data
+    download_df = df.copy()
+    if selected_banks:
+        download_df = download_df[download_df['NSA'].isin(selected_banks)]
+
+    # Download button
     if format_option == "Excel":
-        # Create Excel file
-        output = BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            download_df.to_excel(writer, sheet_name='Data', index=False)
-        output.seek(0)
-
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"banking_data_{len(selected_banks) if selected_banks else 'all'}_banks_{timestamp}.xlsx"
-
-        st.download_button(
-            label="Download",
-            data=output,
-            file_name=filename,
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True
-        )
+        downloads.download_excel(download_df, f"banking_data_{len(selected_banks) if selected_banks else 'all'}_banks")
     else:
-        # CSV download
-        csv_data = download_df.to_csv(index=False).encode('utf-8')
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"banking_data_{len(selected_banks) if selected_banks else 'all'}_banks_{timestamp}.csv"
-
-        st.download_button(
-            label="Download",
-            data=csv_data,
-            file_name=filename,
-            mime="text/csv",
-            use_container_width=True
-        )
+        downloads.download_csv(download_df, f"banking_data_{len(selected_banks) if selected_banks else 'all'}_banks")
 
 st.caption(f"💾 Download includes {len(download_df):,} records")

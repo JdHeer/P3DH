@@ -1,5 +1,5 @@
 """Metric information and categorization utilities."""
-import config
+from . import config
 
 
 def get_metric_category(metric_label, sheet_name):
